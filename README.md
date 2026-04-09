@@ -1,6 +1,6 @@
 # Weather App 🧊🌤️
 
-[![Weather App Demo](https://img.shields.io/badge/Live-Demo-0284c7?style=for-the-badge&logo=vercel&logoColor=white)](https://your-weather-app.vercel.app)
+<!--[![Weather App Demo](https://img.shields.io/badge/Live-Demo-0284c7?style=for-the-badge&logo=vercel&logoColor=white)](https://your-weather-app.vercel.app)-->
 [![Vanilla JS](https://img.shields.io/badge/Vanilla%20JS-100%25-blue?style=for-the-badge&logo=javascript&logoColor=yellow)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![OpenWeatherMap](https://img.shields.io/badge/API-OpenWeatherMap-blueviolet?style=for-the-badge&logo=openweathermap&logoColor=white)](https://openweathermap.org/api)
 
@@ -116,5 +116,5 @@ This project is [MIT](LICENSE) licensed - use for personal & commercial purposes
 
 ⭐ **Star the repo if you found it helpful!** ⭐
 
-**Made with ❤️ using Vanilla JS** | [Demo](https://your-weather-app.vercel.app)
+**Made with ❤️ using Vanilla JS** <!--| [Demo](https://your-weather-app.vercel.app)-->
 
