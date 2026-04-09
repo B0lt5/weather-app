@@ -1,4 +1,4 @@
-const API_KEY = 'a53692cd01fb4ee89b98ef26d852c4b7';
+const API_KEY = prompt('Enter OpenWeatherMap API key (free at openweathermap.org):') || 'demo';
 
 const searchBtn = document.getElementById('search-btn');
 const cityInput = document.getElementById('city-input');

@@ -1,0 +1,12 @@
+node_modules/
+.env
+dist/
+assets/
+*.log
+.DS_Store
+api-config.js
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
