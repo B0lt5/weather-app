@@ -40,21 +40,24 @@
 
     <div class="history-container" id="history-container">
       <h3>Recent Searches</h3>
-      <table id="history-table">
-        <thead>
-          <tr>
-            <th>S/N</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Location</th>
-            <th>Temp (°C)</th>
-            <th>Description</th>
-            <th>Humidity</th>
-            <th>Wind (m/s)</th>
-          </tr>
-        </thead>
-        <tbody id="history-body"></tbody>
-      </table>
+      <div class="table-wrapper">
+        <table id="history-table">
+          <thead>
+            <tr>
+              <th>S/N</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Location</th>
+              <th>Temp (°C)</th>
+              <th>Description</th>
+              <th>Humidity</th>
+              <th>Wind (m/s)</th>
+            </tr>
+          </thead>
+          <tbody id="history-body"></tbody>
+        </table>
+      </div>
+      <button id="clear-history-btn">Clear History</button>
     </div>
   </div>
 

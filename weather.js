@@ -1,14 +1,70 @@
-const API_KEY = prompt('Enter OpenWeatherMap API key (free at openweathermap.org):') || 'demo';
+let API_KEY = localStorage.getItem('weatherAppApiKey');
+
+function getStoredApiKey() {
+  let key = localStorage.getItem('weatherAppApiKey');
+  if (!key) {
+    key = prompt('Enter OpenWeatherMap API key (free at openweathermap.org):');
+    if (key) localStorage.setItem('weatherAppApiKey', key);
+    else key = 'demo';
+  }
+  return key;
+}
+
+API_KEY = API_KEY || getStoredApiKey();
 
 const searchBtn = document.getElementById('search-btn');
 const cityInput = document.getElementById('city-input');
 const resultDiv = document.getElementById('weather-result');
 const errorMsg  = document.getElementById('error-msg');
+const unitToggleBtn = document.getElementById('unit-toggle-btn');
+const geoBtn = document.getElementById('geo-btn');
 let searchHistory = [];
+let isCelsius = true;
+let currentCity = null;
+
+// Load data from localStorage on app start
+function loadFromStorage() {
+  const stored = localStorage.getItem('weatherAppHistory');
+  if (stored) searchHistory = JSON.parse(stored);
+  
+  const storedUnit = localStorage.getItem('weatherAppUnit');
+  if (storedUnit) isCelsius = storedUnit === 'celsius';
+  
+  updateHistoryTable();
+  updateUnitToggleButton();
+}
+
+// Save history to localStorage
+function saveToStorage() {
+  localStorage.setItem('weatherAppHistory', JSON.stringify(searchHistory));
+}
+
+// Save unit preference to localStorage
+function saveUnitPreference() {
+  localStorage.setItem('weatherAppUnit', isCelsius ? 'celsius' : 'fahrenheit');
+}
+
+const clearHistoryBtn = document.getElementById('clear-history-btn');
+
+function clearHistory() {
+  searchHistory = [];
+  saveToStorage();
+  updateHistoryTable();
+}
+
+if (clearHistoryBtn) {
+  clearHistoryBtn.addEventListener('click', clearHistory);
+}
+
+function updateUnitToggleButton() {
+  if (!unitToggleBtn) return;
+  unitToggleBtn.textContent = isCelsius ? 'Switch to °F' : 'Switch to °C';
+}
 
 // Fetch weather from the API
 async function getWeather(city) {
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
+  const units = isCelsius ? 'metric' : 'imperial';
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=${units}`;
   const response = await fetch(url);
 
   if (response.status === 404) throw new Error('City not found');
@@ -23,9 +79,12 @@ async function getWeather(city) {
 function displayWeather(data) {
   errorMsg.classList.add('hidden');
   resultDiv.classList.remove('hidden');
+  
+  currentCity = data.name;
 
+  const unit = isCelsius ? '°C' : '°F';
   document.getElementById('city-name').textContent    = data.name;
-  document.getElementById('temperature').textContent = `🌡️ ${data.main.temp}°C`;
+  document.getElementById('temperature').textContent = `🌡️ ${data.main.temp}${unit}`;
   document.getElementById('description').textContent = data.weather[0].description;
   document.getElementById('humidity').textContent    = `💧 Humidity: ${data.main.humidity}%`;
   document.getElementById('wind').textContent        = `💨 Wind: ${data.wind.speed} m/s`;
@@ -38,12 +97,14 @@ function displayWeather(data) {
     temp: data.main.temp,
     description: data.weather[0].description,
     humidity: data.main.humidity + '%',
-    wind: data.wind.speed
+    wind: data.wind.speed,
+    unit: unit
   };
 
   searchHistory.unshift(record);           // add to front
   if (searchHistory.length > 10) searchHistory.pop(); // keep max 10
   updateHistoryTable();
+  saveToStorage();
 }
 
 function updateHistoryTable() {
@@ -60,6 +121,7 @@ function updateHistoryTable() {
 
   searchHistory.forEach((record, index) => {
     const row = document.createElement('tr');
+    row.style.cursor = 'pointer';
     row.innerHTML = `
       <td>${index + 1}</td>
       <td>${record.date}</td>
@@ -70,6 +132,10 @@ function updateHistoryTable() {
       <td>${record.humidity}</td>
       <td>${record.wind}</td>
     `;
+    row.addEventListener('click', () => {
+      cityInput.value = record.city;
+      searchBtn.click();
+    });
     tbody.appendChild(row);
   });
 }
@@ -98,6 +164,8 @@ searchBtn.addEventListener('click', async () => {
   }
 });
 
+loadFromStorage();
+
 // Also trigger on Enter key press
 cityInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') searchBtn.click();
@@ -109,6 +177,3 @@ clearBtn.addEventListener('click', () => {
   resultDiv.classList.add('hidden');
   cityInput.value = '';
 });
-
-document.getElementById('history-container').style.display = 'none';
-
