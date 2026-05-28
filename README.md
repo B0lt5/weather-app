@@ -12,26 +12,20 @@ Perfect for learning modern JavaScript (async/await, DOM manipulation, local sta
 
 ## ✨ Features
 
-| Feature | Description |
-|---------|-------------|
-| **🔍 City Search** | Search weather by city name (Enter key or button) |
-| **📊 Live Data** | Real-time data from OpenWeatherMap API (°C metric) |
-| **📈 History Table** | Auto-saves 10 most recent searches with timestamp |
-| **🎨 Responsive** | Works perfectly on desktop, tablet, mobile |
-| **⚡ Loading States** | Smooth spinner + error handling for invalid cities |
-| **🧹 Clear Results** | One-click to reset current results |
-| **💫 Animations** | Hover effects, smooth transitions |
-| **🌅 Themed UI** | Beautiful gradient background + weather icons |
+|Feature|Description|
+|---|---|
+|**🔍 City Search**|Search weather by city name (Enter key or button)|
+|**📊 Live Data**|Real-time data from OpenWeatherMap API (°C metric)|
+|**📈 History Table**|Auto-saves 10 most recent searches with timestamp|
+|**🎨 Responsive**|Works perfectly on desktop, tablet, mobile|
+|**⚡ Loading States**|Smooth spinner + error handling for invalid cities|
+|**🧹 Clear Results**|One-click to reset current results|
+|**💫 Animations**|Hover effects, smooth transitions|
+|**🌅 Themed UI**|Beautiful gradient background + weather icons|
 
 ## 🎬 Live Demo
 
 Simply open `index.html` in your browser!
-
-```
-# Quick local preview
-open index.html
-# Or use VSCode Live Server extension
-```
 
 **Try these cities:** London, Tokyo, New York, Sydney, Lagos
 
@@ -53,15 +47,14 @@ No build tools, no dependencies, no installation required!
 
 ## 📱 How It Works
 
-```
-1. User enters city → Click/Enter
-2. JS fetches: `https://api.openweathermap.org/data/2.5/weather`
-3. Displays: Temp (°C), Description, Humidity (%), Wind (m/s)
-4. Saves to history array (max 10 entries)
-5. Renders table with S/N, Date, Time, Data
-```
+1. **User enters city → Click/Enter**
+2. **JS fetches: `https://api.openweathermap.org/data/2.5/weather`**
+3. **Displays: Temp (°C), Description, Humidity (%), Wind (m/s)**
+4. **Saves to history array (max 10 entries)**
+5. **Renders table with S/N, Date, Time, Data**
 
 **Key JS Concepts Used:**
+
 - `async/await` + `fetch()` API
 - DOM manipulation (`querySelector`, `classList`)
 - Event listeners (`click`, `keydown`)
@@ -71,17 +64,19 @@ No build tools, no dependencies, no installation required!
 ## 📸 Screenshots
 
 ### Desktop View
+
 ![Desktop](assets/desktop-view.png)
 
 ### Mobile View
-![Mobile](assets/mobile-view.png)
 
+![Mobile](assets/mobile-view.png)
 
 ## 🔑 API Configuration
 
 The app uses a **free OpenWeatherMap API key** (bundled in `weather.js`).
 
 **To use your own key:**
+
 ```javascript
 // weather.js line 1
 const API_KEY = 'YOUR_API_KEY_HERE';
@@ -116,5 +111,4 @@ This project is [MIT](LICENSE) licensed - use for personal & commercial purposes
 
 ⭐ **Star the repo if you found it helpful!** ⭐
 
-**Made with ❤️ using Vanilla JS** <!--| [Demo](https://your-weather-app.vercel.app)-->
-
+Made with ❤️ using Vanilla JS <!-- | [Demo](https://your-weather-app.vercel.app) -->
