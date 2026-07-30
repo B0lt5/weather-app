@@ -60,6 +60,7 @@ h1 .fa-solid {
 /* Search Box */
 .search-box {
   display: flex;
+  position: relative;
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -85,6 +86,79 @@ h1 .fa-solid {
   color: #94a3b8;
 }
 
+/* Container for input and clear button */
+.search-box-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+/* Adjust input padding so text doesn't flow under the 'x' button */
+#city-input {
+  padding-right: 35px; 
+}
+
+/* Style for the custom clear button */
+.clear-input-btn {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.clear-input-btn:hover {
+  color: #0284c7;
+}
+
+/* Utility class to hide elements */
+.hidden {
+  display: none !important;
+}
+
+/* Autocomplete Suggestions Dropdown */
+.suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #7dd3fc;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(14, 116, 180, 0.15);
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 4px;
+}
+
+/* Individual suggestion item style */
+.suggestion-item {
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  color: #1e3a5f;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f9ff;
+  transition: background-color 0.15s ease;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover {
+  background-color: #f0f9ff;
+  color: #0284c7;
+}
+
 #search-btn {
   background-color: #0284c7;
   color: white;
@@ -103,8 +177,7 @@ h1 .fa-solid {
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
 }
 
-#unit-toggle-btn,
-#geo-btn {
+#unit-toggle-btn {
   background-color: #0284c7;
   color: white;
   border: none;
@@ -117,8 +190,7 @@ h1 .fa-solid {
   white-space: nowrap;
 }
 
-#unit-toggle-btn:hover,
-#geo-btn:hover {
+#unit-toggle-btn:hover {
   background-color: #0369a1;
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
 }
@@ -180,6 +252,51 @@ h1 .fa-solid {
   text-align: center;
 }
 
+/* Flag and Tooltip Wrapper */
+.flag-tooltip-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Country Flag Image Style */
+#country-flag {
+  width: 32px;
+  height: 22px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #7dd3fc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Tooltip text (hidden by default) */
+.flag-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: 130%; /* Positions it directly under the flag */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1e3a5f;
+  color: white;
+  text-align: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  white-space: nowrap;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+/* Show tooltip when hovering over the flag container */
+.flag-tooltip-container:hover .flag-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
 #temperature {
   font-size: 1.3rem;
   font-weight: bold;
@@ -224,9 +341,28 @@ h1 .fa-solid {
   transition: all 0.2s ease;
 }
 
+#result-unit-toggle-btn {
+  margin-top: 18px;
+  width: 100%;
+  background-color: transparent;
+  color: #0284c7;
+  border: 1px solid #7dd3fc;
+  padding: 9px;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
 #clear-btn:hover {
   background-color: #fef2f2;
   border-color: #dc2626;
+}
+
+#result-unit-toggle-btn:hover {
+  background-color: #7dd3fc;
+  border-color: #0284c7;
 }
 
 .history-container {

@@ -1,54 +1,45 @@
-let API_KEY = localStorage.getItem('weatherAppApiKey');
-
-function getStoredApiKey() {
-  let key = localStorage.getItem('weatherAppApiKey');
-  if (!key) {
-    key = prompt('Enter OpenWeatherMap API key (free at openweathermap.org):');
-    if (key) localStorage.setItem('weatherAppApiKey', key);
-    else key = 'demo';
-  }
-  return key;
-}
-
-API_KEY = API_KEY || getStoredApiKey();
+import { API_KEY } from './api-config.js';
 
 const searchBtn = document.getElementById('search-btn');
 const cityInput = document.getElementById('city-input');
 const resultDiv = document.getElementById('weather-result');
 const errorMsg  = document.getElementById('error-msg');
-const unitToggleBtn = document.getElementById('unit-toggle-btn');
-const geoBtn = document.getElementById('geo-btn');
+const historyUnitToggleBtn = document.getElementById('unit-toggle-btn');
+const resultUnitToggleBtn = document.getElementById('result-unit-toggle-btn');
+const clearHistoryBtn = document.getElementById('clear-history-btn');
+const clearInputBtn = document.getElementById('clear-input-btn');
+const suggestionsContainer = document.getElementById('suggestions-container');
 let searchHistory = [];
-let isCelsius = true;
+let isResultCelsius = true;
+let isHistoryCelsius = true;
 let currentCity = null;
+let currentWeatherData = null;
+
+//Saves the search history and unit preference to localStorage
+function saveAppData() {
+  localStorage.setItem('weatherAppHistory', JSON.stringify(searchHistory));
+  localStorage.setItem('weatherAppUnit', isResultCelsius ? 'celsius' : 'fahrenheit');
+}
 
 // Load data from localStorage on app start
 function loadFromStorage() {
   const stored = localStorage.getItem('weatherAppHistory');
   if (stored) searchHistory = JSON.parse(stored);
-  
+
   const storedUnit = localStorage.getItem('weatherAppUnit');
-  if (storedUnit) isCelsius = storedUnit === 'celsius';
-  
+  const storedIsCelsius = storedUnit ? storedUnit === 'celsius' : true;
+  isResultCelsius = storedIsCelsius;
+  isHistoryCelsius = storedIsCelsius;
+
   updateHistoryTable();
-  updateUnitToggleButton();
+  updateHistoryUnitToggleButton();
+  updateResultUnitToggleButton();
+  updateTemperatureHeader();
 }
-
-// Save history to localStorage
-function saveToStorage() {
-  localStorage.setItem('weatherAppHistory', JSON.stringify(searchHistory));
-}
-
-// Save unit preference to localStorage
-function saveUnitPreference() {
-  localStorage.setItem('weatherAppUnit', isCelsius ? 'celsius' : 'fahrenheit');
-}
-
-const clearHistoryBtn = document.getElementById('clear-history-btn');
 
 function clearHistory() {
   searchHistory = [];
-  saveToStorage();
+  saveAppData();
   updateHistoryTable();
 }
 
@@ -56,14 +47,9 @@ if (clearHistoryBtn) {
   clearHistoryBtn.addEventListener('click', clearHistory);
 }
 
-function updateUnitToggleButton() {
-  if (!unitToggleBtn) return;
-  unitToggleBtn.textContent = isCelsius ? 'Switch to °F' : 'Switch to °C';
-}
-
 // Fetch weather from the API
 async function getWeather(city) {
-  const units = isCelsius ? 'metric' : 'imperial';
+  const units = isResultCelsius ? 'metric' : 'imperial';
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=${units}`;
   const response = await fetch(url);
 
@@ -74,37 +60,63 @@ async function getWeather(city) {
   return await response.json();
 }
 
+function updateCurrentWeatherDisplay(data) {
+  const unit = data.unit || (isResultCelsius ? '°C' : '°F');
+  document.getElementById('city-name').textContent = data.name;
+  
+  const flagContainer = document.getElementById('country-flag-container');
+  const flagImg = document.getElementById('country-flag');
+  const tooltip = document.getElementById('country-tooltip');
+
+  if (data.sys && data.sys.country) {
+    const countryCode = data.sys.country.toLowerCase();
+    
+    flagImg.src = `https://flagcdn.com/w40/${countryCode}.png`;
+    
+    // Map country code or use data if full name is available.
+    // OpenWeatherMap gives us the 2-letter code, which we can display or map.
+    tooltip.textContent = data.sys.country; // Alternatively, you can display the country code
+    
+    flagContainer.classList.remove('hidden');
+  } else {
+    flagContainer.classList.add('hidden');
+  }
+
+  document.getElementById('temperature').textContent = `🌡️ ${data.main.temp}${unit}`;
+  document.getElementById('description').textContent = data.weather[0].description;
+  document.getElementById('humidity').textContent    = `💧 Humidity: ${data.main.humidity}%`;
+  document.getElementById('wind').textContent        = `💨 Wind: ${data.wind.speed} m/s`;
+}
 
 // Display the weather data on the page
 function displayWeather(data) {
   errorMsg.classList.add('hidden');
   resultDiv.classList.remove('hidden');
-  
-  currentCity = data.name;
 
-  const unit = isCelsius ? '°C' : '°F';
-  document.getElementById('city-name').textContent    = data.name;
-  document.getElementById('temperature').textContent = `🌡️ ${data.main.temp}${unit}`;
-  document.getElementById('description').textContent = data.weather[0].description;
-  document.getElementById('humidity').textContent    = `💧 Humidity: ${data.main.humidity}%`;
-  document.getElementById('wind').textContent        = `💨 Wind: ${data.wind.speed} m/s`;
+  currentCity = data.name;
+  currentWeatherData = {
+    ...data,
+    unit: isResultCelsius ? '°C' : '°F'
+  };
+
+  updateCurrentWeatherDisplay(currentWeatherData);
 
   // Save to history
   const record = {
     date: new Date().toLocaleDateString(),
     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     city: data.name,
-    temp: data.main.temp,
+    temp: Number(data.main.temp.toFixed(1)),
     description: data.weather[0].description,
     humidity: data.main.humidity + '%',
     wind: data.wind.speed,
-    unit: unit
+    unit: currentWeatherData.unit
   };
 
-  searchHistory.unshift(record);           // add to front
-  if (searchHistory.length > 10) searchHistory.pop(); // keep max 10
+  searchHistory.unshift(record);
+  if (searchHistory.length > 10) searchHistory.pop();
   updateHistoryTable();
-  saveToStorage();
+  saveAppData();
 }
 
 function updateHistoryTable() {
@@ -127,7 +139,7 @@ function updateHistoryTable() {
       <td>${record.date}</td>
       <td>${record.time}</td>
       <td>${record.city}</td>
-      <td>${record.temp}</td>
+      <td>${record.temp.toFixed(1)}</td>
       <td>${record.description}</td>
       <td>${record.humidity}</td>
       <td>${record.wind}</td>
@@ -140,13 +152,11 @@ function updateHistoryTable() {
   });
 }
 
-
 // Button click triggers the whole flow
 searchBtn.addEventListener('click', async () => {
   const city = cityInput.value.trim();
   if (!city) return;
 
-  // Show loader, hide previous results and errors
   document.getElementById('loader').classList.add('active');
   resultDiv.classList.add('hidden');
   errorMsg.classList.add('hidden');
@@ -157,16 +167,13 @@ searchBtn.addEventListener('click', async () => {
   } catch (err) {
     resultDiv.classList.add('hidden');
     errorMsg.classList.remove('hidden');
-    errorMsg.textContent = err.message;
   } finally {
-    // Hide loader whether it succeeded or failed
     document.getElementById('loader').classList.remove('active');
   }
 });
 
 loadFromStorage();
 
-// Also trigger on Enter key press
 cityInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') searchBtn.click();
 });
@@ -177,3 +184,155 @@ clearBtn.addEventListener('click', () => {
   resultDiv.classList.add('hidden');
   cityInput.value = '';
 });
+
+
+// Fetch city suggestions from OpenWeatherMap Geocoding API
+async function getCitySuggestions(query) {
+  if (!query || query.length < 2) return [];
+  
+  const encodedQuery = encodeURIComponent(query);
+  const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodedQuery}&limit=5&appid=${API_KEY}`;
+  
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return [];
+    return await response.json();
+  } catch (err) {
+    console.error('Error fetching suggestions:', err);
+    return [];
+  }
+}
+
+cityInput.addEventListener('input', () => {
+  if (cityInput.value.trim() !== '') {
+    clearInputBtn.classList.remove('hidden');
+  } else {
+    clearInputBtn.classList.add('hidden');
+  }
+});
+
+clearInputBtn.addEventListener('click', () => {
+  cityInput.value = '';
+  clearInputBtn.classList.add('hidden');
+  cityInput.focus();
+});
+
+// History table unit toggle button click event
+if (historyUnitToggleBtn) {
+  historyUnitToggleBtn.addEventListener('click', () => {
+    const previousUnit = isHistoryCelsius ? '°C' : '°F';
+    const nextUnit = isHistoryCelsius ? '°F' : '°C';
+
+    isHistoryCelsius = !isHistoryCelsius;
+
+    searchHistory = searchHistory.map((record) => {
+      if (!record.unit) return record;
+
+      const convertedTemp = convertTemperature(record.temp, record.unit, nextUnit);
+      return {
+        ...record,
+        temp: Number(convertedTemp.toFixed(1)),
+        unit: nextUnit
+      };
+    });
+
+    updateHistoryUnitToggleButton();
+    updateTemperatureHeader();
+    updateHistoryTable();
+  });
+}
+
+if (resultUnitToggleBtn) {
+  resultUnitToggleBtn.addEventListener('click', () => {
+    const previousUnit = isResultCelsius ? '°C' : '°F';
+    const nextUnit = isResultCelsius ? '°F' : '°C';
+
+    isResultCelsius = !isResultCelsius;
+
+    if (currentWeatherData) {
+      currentWeatherData.main.temp = Number(
+        convertTemperature(currentWeatherData.main.temp, previousUnit, nextUnit).toFixed(1)
+      );
+      currentWeatherData.unit = nextUnit;
+      updateCurrentWeatherDisplay(currentWeatherData);
+    }
+
+    saveAppData();
+    updateResultUnitToggleButton();
+  });
+}
+
+function convertTemperature(temp, fromUnit, toUnit) {
+  if (fromUnit === toUnit) return temp;
+
+  if (fromUnit === '°C' && toUnit === '°F') {
+    return (temp * 9 / 5) + 32;
+  }
+
+  if (fromUnit === '°F' && toUnit === '°C') {
+    return (temp - 32) * 5 / 9;
+  }
+
+  return temp;
+}
+
+function updateHistoryUnitToggleButton() {
+  if (!historyUnitToggleBtn) return;
+  historyUnitToggleBtn.textContent = isHistoryCelsius ? 'Switch to °F' : 'Switch to °C';
+}
+
+function updateResultUnitToggleButton() {
+  if (!resultUnitToggleBtn) return;
+  resultUnitToggleBtn.textContent = isResultCelsius ? 'Switch to °F' : 'Switch to °C';
+}
+
+function updateTemperatureHeader() {
+  const header = document.querySelector('#history-table th:nth-child(5)');
+  if (header) {
+    header.textContent = `Temp (${isHistoryCelsius ? '°C' : '°F'})`;
+  }
+}
+
+// Event listener for typing in the city input box
+cityInput.addEventListener('input', async (e) => {
+  const query = e.target.value.trim();
+
+  if (query.length < 2) {
+    suggestionsContainer.innerHTML = '';
+    suggestionsContainer.classList.add('hidden');
+    return;
+  }
+
+  const suggestions = await getCitySuggestions(query);
+
+  if (suggestions.length === 0) {
+    suggestionsContainer.innerHTML = '';
+    suggestionsContainer.classList.add('hidden');
+    return;
+  }
+
+  suggestionsContainer.innerHTML = '';
+  suggestionsContainer.classList.remove('hidden');
+
+  suggestions.forEach(city => {
+    const item = document.createElement('div');
+    item.classList.add('suggestion-item');
+    item.textContent = `${city.name}${city.state ? ', ' + city.state : ''} (${city.country})`;
+
+    item.addEventListener('click', () => {
+      cityInput.value = city.name;
+      suggestionsContainer.innerHTML = '';
+      suggestionsContainer.classList.add('hidden');
+      searchBtn.click();
+    });
+
+    suggestionsContainer.appendChild(item);
+  });
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-box-wrapper') && !e.target.closest('#suggestions-container')) {
+    suggestionsContainer.classList.add('hidden');
+  }
+});
+

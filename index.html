@@ -15,20 +15,34 @@
 
       <!-- Search area -->
       <div class="search-box">
-        <input type="text" id="city-input" placeholder="Enter a city name..."/>
+        <div class="search-box-wrapper">
+          <input type="text" id="city-input" placeholder="Enter a city name..."  autocomplete="off"/>
+          <button id="clear-input-btn" class="clear-input-btn hidden" type="button">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <div id="suggestions-container" class="suggestions-dropdown hidden"></div>
+        </div>
         <button id="search-btn">Get Weather</button>
       </div>
 
       <!-- Error message (hidden by default) -->
-      <p id="error-msg" class="error hidden">City not found. Try again.</p>
+      <p id="error-msg" class="error hidden">City not found. Please check your spelling and try again.</p>
 
       <!-- Results area (hidden by default) -->
       <div id="weather-result" class="result hidden">
-        <h2 id="city-name"></h2>
+        <div class="city-header-wrapper" style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px;">
+          <h2 id="city-name" style="margin-bottom: 0;"></h2>
+          <!-- Flag image with a container for the tooltip -->
+          <div id="country-flag-container" class="flag-tooltip-container hidden">
+            <img id="country-flag" src="" alt="Country Flag" />
+            <span id="country-tooltip" class="flag-tooltip"></span>
+          </div>
+        </div>
         <p id="temperature"></p>
         <p id="description"></p>
         <p id="humidity"></p>
         <p id="wind"></p>
+        <button id="result-unit-toggle-btn">Switch to °F</button>
         <button id="clear-btn">Clear</button>
       </div>
 
@@ -58,6 +72,7 @@
         </table>
       </div>
       <button id="clear-history-btn">Clear History</button>
+      <button id="unit-toggle-btn">Switch to °F</button>
     </div>
   </div>
 
@@ -73,6 +88,6 @@
     </div>
   </footer>
 
-  <script src="weather.js"></script>
+  <script type="module" src="weather.js"></script>
 </body>
 </html>
