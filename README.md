@@ -15,7 +15,8 @@ Perfect for learning modern JavaScript (async/await, DOM manipulation, local sta
 |Feature|Description|
 |---|---|
 |**🔍 City Search**|Search weather by city name (Enter key or button)|
-|**📊 Live Data**|Real-time data from OpenWeatherMap API (°C metric)|
+|**📊 Live Data**|Real-time data from OpenWeatherMap API|
+|**🌡️ Unit Toggle**|Switch between °C/°F and m/s/mph independently|
 |**📈 History Table**|Auto-saves 10 most recent searches with timestamp|
 |**🎨 Responsive**|Works perfectly on desktop, tablet, mobile|
 |**⚡ Loading States**|Smooth spinner + error handling for invalid cities|
@@ -49,7 +50,7 @@ No build tools, no dependencies, no installation required!
 
 1. **User enters city → Click/Enter**
 2. **JS fetches: `https://api.openweathermap.org/data/2.5/weather`**
-3. **Displays: Temp (°C), Description, Humidity (%), Wind (m/s)**
+3. **Displays: Temp, Description, Humidity (%), Wind speed**
 4. **Saves to history array (max 10 entries)**
 5. **Renders table with S/N, Date, Time, Data**
 
@@ -73,25 +74,24 @@ No build tools, no dependencies, no installation required!
 
 ## 🔑 API Configuration
 
-The app uses a **free OpenWeatherMap API key** (bundled in `weather.js`).
+The app uses a **free OpenWeatherMap API key** (configured in `api-config.js`).
 
 **To use your own key:**
 
 ```javascript
-// weather.js line 1
+// api-config.js
 const API_KEY = 'YOUR_API_KEY_HERE';
 ```
 
 **Get free key:** [openweathermap.org](https://openweathermap.org/api)
 
-⚠️ **Note:** History resets on page reload (stored in memory). Add `localStorage` for persistence!
-
 ## 🚀 Enhancements Ideas
 
-- [ ] Save history to `localStorage`
+- [x] Save history to `localStorage`
+- [x] Unit toggle (°C/°F)
+- [x] Wind speed unit toggle (m/s ↔ mph)
 - [ ] Weather forecast (5-day)
 - [ ] Geolocation (current location)
-- [ ] Unit toggle (°C/°F)
 - [ ] Dark/Light mode
 - [ ] PWA (offline support)
 

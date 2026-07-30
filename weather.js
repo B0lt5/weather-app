@@ -9,16 +9,20 @@ const resultUnitToggleBtn = document.getElementById('result-unit-toggle-btn');
 const clearHistoryBtn = document.getElementById('clear-history-btn');
 const clearInputBtn = document.getElementById('clear-input-btn');
 const suggestionsContainer = document.getElementById('suggestions-container');
+const resultWindToggleBtn = document.getElementById('result-wind-toggle-btn');
+const historyWindToggleBtn = document.getElementById('wind-toggle-btn');
 let searchHistory = [];
 let isResultCelsius = true;
 let isHistoryCelsius = true;
+let isResultWindMps = true;
+let isHistoryWindMps = true;
 let currentCity = null;
 let currentWeatherData = null;
 
-//Saves the search history and unit preference to localStorage
 function saveAppData() {
   localStorage.setItem('weatherAppHistory', JSON.stringify(searchHistory));
   localStorage.setItem('weatherAppUnit', isResultCelsius ? 'celsius' : 'fahrenheit');
+  localStorage.setItem('weatherAppWindUnit', isResultWindMps ? 'm/s' : 'mph');
 }
 
 // Load data from localStorage on app start
@@ -31,10 +35,18 @@ function loadFromStorage() {
   isResultCelsius = storedIsCelsius;
   isHistoryCelsius = storedIsCelsius;
 
+  const storedWindUnit = localStorage.getItem('weatherAppWindUnit');
+  const storedIsMps = storedWindUnit ? storedWindUnit === 'm/s' : true;
+  isResultWindMps = storedIsMps;
+  isHistoryWindMps = storedIsMps;
+
   updateHistoryTable();
   updateHistoryUnitToggleButton();
   updateResultUnitToggleButton();
+  updateHistoryWindToggleButton();
+  updateResultWindToggleButton();
   updateTemperatureHeader();
+  updateWindHeader();
 }
 
 function clearHistory() {
@@ -85,7 +97,8 @@ function updateCurrentWeatherDisplay(data) {
   document.getElementById('temperature').textContent = `🌡️ ${data.main.temp}${unit}`;
   document.getElementById('description').textContent = data.weather[0].description;
   document.getElementById('humidity').textContent    = `💧 Humidity: ${data.main.humidity}%`;
-  document.getElementById('wind').textContent        = `💨 Wind: ${data.wind.speed} m/s`;
+  const windUnit = isResultWindMps ? 'm/s' : 'mph';
+  document.getElementById('wind').textContent = `💨 Wind: ${data.wind.speed} ${windUnit}`;
 }
 
 // Display the weather data on the page
@@ -110,6 +123,7 @@ function displayWeather(data) {
     description: data.weather[0].description,
     humidity: data.main.humidity + '%',
     wind: data.wind.speed,
+    windUnit: isResultWindMps ? 'm/s' : 'mph',
     unit: currentWeatherData.unit
   };
 
@@ -142,7 +156,7 @@ function updateHistoryTable() {
       <td>${record.temp.toFixed(1)}</td>
       <td>${record.description}</td>
       <td>${record.humidity}</td>
-      <td>${record.wind}</td>
+      <td>${record.wind} ${record.windUnit || (isHistoryWindMps ? 'm/s' : 'mph')}</td>
     `;
     row.addEventListener('click', () => {
       cityInput.value = record.city;
@@ -262,6 +276,48 @@ if (resultUnitToggleBtn) {
   });
 }
 
+if (resultWindToggleBtn) {
+  resultWindToggleBtn.addEventListener('click', () => {
+    const prevUnit = isResultWindMps ? 'm/s' : 'mph';
+    const nextUnit = isResultWindMps ? 'mph' : 'm/s';
+
+    isResultWindMps = !isResultWindMps;
+
+    if (currentWeatherData) {
+      currentWeatherData.wind.speed = Number(
+        convertSpeed(currentWeatherData.wind.speed, prevUnit, nextUnit).toFixed(1)
+      );
+      updateCurrentWeatherDisplay(currentWeatherData);
+    }
+
+    saveAppData();
+    updateResultWindToggleButton();
+  });
+}
+
+if (historyWindToggleBtn) {
+  historyWindToggleBtn.addEventListener('click', () => {
+    const nextUnit = isHistoryWindMps ? 'mph' : 'm/s';
+    const prevUnit = isHistoryWindMps ? 'm/s' : 'mph';
+
+    isHistoryWindMps = !isHistoryWindMps;
+
+    searchHistory = searchHistory.map((record) => {
+      if (record.wind === undefined || record.wind === null) return record;
+      const convertedWind = convertSpeed(record.wind, record.windUnit || 'm/s', nextUnit);
+      return {
+        ...record,
+        wind: Number(convertedWind.toFixed(1)),
+        windUnit: nextUnit
+      };
+    });
+
+    updateHistoryWindToggleButton();
+    updateWindHeader();
+    updateHistoryTable();
+  });
+}
+
 function convertTemperature(temp, fromUnit, toUnit) {
   if (fromUnit === toUnit) return temp;
 
@@ -274,6 +330,13 @@ function convertTemperature(temp, fromUnit, toUnit) {
   }
 
   return temp;
+}
+
+function convertSpeed(speed, fromUnit, toUnit) {
+  if (fromUnit === toUnit) return speed;
+  if (fromUnit === 'm/s' && toUnit === 'mph') return speed * 2.23694;
+  if (fromUnit === 'mph' && toUnit === 'm/s') return speed / 2.23694;
+  return speed;
 }
 
 function updateHistoryUnitToggleButton() {
@@ -290,6 +353,23 @@ function updateTemperatureHeader() {
   const header = document.querySelector('#history-table th:nth-child(5)');
   if (header) {
     header.textContent = `Temp (${isHistoryCelsius ? '°C' : '°F'})`;
+  }
+}
+
+function updateHistoryWindToggleButton() {
+  if (!historyWindToggleBtn) return;
+  historyWindToggleBtn.textContent = isHistoryWindMps ? 'Switch to mph' : 'Switch to m/s';
+}
+
+function updateResultWindToggleButton() {
+  if (!resultWindToggleBtn) return;
+  resultWindToggleBtn.textContent = isResultWindMps ? 'Switch to mph' : 'Switch to m/s';
+}
+
+function updateWindHeader() {
+  const header = document.getElementById('wind-header');
+  if (header) {
+    header.textContent = `Wind (${isHistoryWindMps ? 'm/s' : 'mph'})`;
   }
 }
 

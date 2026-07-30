@@ -177,7 +177,8 @@ h1 .fa-solid {
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
 }
 
-#unit-toggle-btn {
+#unit-toggle-btn,
+#wind-toggle-btn {
   background-color: #0284c7;
   color: white;
   border: none;
@@ -190,7 +191,8 @@ h1 .fa-solid {
   white-space: nowrap;
 }
 
-#unit-toggle-btn:hover {
+#unit-toggle-btn:hover,
+#wind-toggle-btn:hover {
   background-color: #0369a1;
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
 }
@@ -341,7 +343,8 @@ h1 .fa-solid {
   transition: all 0.2s ease;
 }
 
-#result-unit-toggle-btn {
+#result-unit-toggle-btn,
+#result-wind-toggle-btn {
   margin-top: 18px;
   width: 100%;
   background-color: transparent;
@@ -360,7 +363,8 @@ h1 .fa-solid {
   border-color: #dc2626;
 }
 
-#result-unit-toggle-btn:hover {
+#result-unit-toggle-btn:hover,
+#result-wind-toggle-btn:hover {
   background-color: #7dd3fc;
   border-color: #0284c7;
 }
@@ -456,11 +460,6 @@ h1 .fa-solid {
 #clear-history-btn:hover {
   background-color: #fef2f2;
   border-color: #dc2626;
-}
-
-/* Utility */
-.hidden {
-  display: none;
 }
 
 /* Footer */
