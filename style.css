@@ -531,3 +531,143 @@ h1 .fa-solid {
     width: 100%;
   }
 }
+
+@media (max-width: 480px) {
+  .main {
+    padding: 20px 10px;
+  }
+
+  .container {
+    padding: 24px 20px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+  }
+
+  #city-input {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+
+  #city-input::placeholder {
+    font-size: 0.8rem;
+  }
+
+  /* Stack toggle buttons vertically on very small screens */
+  #result-unit-toggle-btn,
+  #result-wind-toggle-btn,
+  #clear-btn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  #search-btn {
+    padding: 12px 16px;
+    font-size: 0.85rem;
+  }
+
+  .error {
+    padding: 8px;
+    font-size: 0.8rem;
+    margin-bottom: 12px;
+  }
+
+  .result {
+    padding: 16px;
+    margin-top: 8px;
+  }
+
+  #temperature {
+    font-size: 1.1rem;
+  }
+
+  #description {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+  }
+
+  #humidity,
+  #wind {
+    font-size: 0.8rem;
+    padding: 6px 0;
+  }
+
+  #clear-btn {
+    margin-top: 12px;
+    padding: 8px;
+    font-size: 0.8rem;
+  }
+
+  #result-unit-toggle-btn,
+  #result-unit-toggle-btn:hover {
+    margin-top: 12px;
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  #result-unit-toggle-btn:hover,
+  #result-wind-toggle-btn:hover {
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+  }
+
+  /* History table on mobile */
+  .history-container {
+    padding: 20px 16px;
+  }
+
+  .history-container h3 {
+    font-size: 1rem;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+  }
+
+  #history-table {
+    font-size: 0.7rem;
+  }
+
+  #history-table thead tr {
+    background-color: #e0f2fe;
+    border-bottom: 2px solid #7dd3fc;
+  }
+
+  #history-table th {
+    padding: 6px 8px;
+    font-size: 0.65rem;
+    border: 1px solid #000;
+  }
+
+  #history-table td {
+    padding: 6px 8px;
+    font-size: 0.65rem;
+    border: 1px solid #000;
+  }
+
+  #history-table tbody tr:hover {
+    background-color: #f0f9ff;
+    cursor: pointer;
+  }
+
+  #history-table tbody tr:last-child td {
+    border-bottom: 1px solid #000;
+  }
+
+  #history-table td:first-child {
+    color: #0284c7;
+    font-weight: bold;
+  }
+
+  #clear-history-btn {
+    margin-top: 12px;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+
+  /* Wind header on mobile */
+  #wind-header {
+    font-size: 0.75rem;
+  }
+}
